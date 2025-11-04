@@ -18,12 +18,13 @@
         }
         .calculadora{
             position: absolute;
-            background-color: rgba(8, 114, 35, 0.561);
+            background-color: rgba(0, 0, 0, 0.8);
             top: 50%;
             left: 50%;
             transform: translate(-50%,-50%);
             border-radius: 15px;
             padding: 15px;
+            box-shadow: 0px 0px 15px rgba(0,0,0,0.5);
         }
         .botao{
             width: 50px;
@@ -48,9 +49,9 @@
             text-align: right;
             padding: 5px;
         }
-           
-        
-        
+
+
+
     </style>
 </head>
 <body>
@@ -59,80 +60,99 @@
         <div class="calculadora">
             <h1>Calculadora</h1>
             <p id="resultado"></p>
-            
+
             <table>
                 <tr>
-                    <td><button class="botao" onclick= "clean()">C</button></td>
-                    <td><button class="botao" onclick="back()">x</button></td>
-                    <td><button class="botao" onclick="insert('%')">%</button></td>
-                    <td><button class="botao" onclick="insert('/')">/</button></td>
-                    </tr>
-                    
-                
-                    
-                    <tr>
-                    <td><button class="botao" onclick="insert('7')">7</button></td>
-                    <td><button class="botao" onclick="insert('8')">8</button></td>
-                    <td><button class="botao" onclick="insert('9')">9</button></td>
-                    <td><button class="botao" onclick="insert('*')">*</button></td>
-                    </tr>
-                    <tr>
-                        <td><button class="botao" onclick="insert('4')">4</button></td>
-                        <td><button class="botao" onclick="insert('5')">5</button></td>
-                        <td><button class="botao" onclick="insert('6')">6</button></td>
-                        <td><button class="botao" onclick="insert('-')">-</button></td>
-                    </tr>
-                    <tr>
-                        <td><button class="botao" onclick="insert('1')">1</button></td>
-                        <td><button class="botao" onclick="insert('2')">2</button></td>
-                        <td><button class="botao" onclick="insert('3')">3</button></td>
-                        <td><button class="botao" onclick="insert('+')">+</button></td>
-                    </tr>
-                    <tr>
-                        <td><button class="botao" onclick="insert('+/-')">+/-</button></td>
-                        <td><button class="botao" onclick="insert('0')">0</button></td>
-                        <td><button class="botao" onclick="insert('.')">.</button></td>
-                        <td><button class="botao" onclick="calcular()">=</button></td>
-                    </tr>
-                    
-                
+                    <td><button class="botao" data-action="clear">C</button></td>
+                    <td><button class="botao" data-action="backspace">&larr;</button></td>
+                    <td><button class="botao" data-action="percent">%</button></td>
+                    <td><button class="botao" data-value="/">/</button></td>
+                </tr>
+                <tr>
+                    <td><button class="botao" data-value="7">7</button></td>
+                    <td><button class="botao" data-value="8">8</button></td>
+                    <td><button class="botao" data-value="9">9</button></td>
+                    <td><button class="botao" data-value="*">*</button></td>
+                </tr>
+                <tr>
+                    <td><button class="botao" data-value="4">4</button></td>
+                    <td><button class="botao" data-value="5">5</button></td>
+                    <td><button class="botao" data-value="6">6</button></td>
+                    <td><button class="botao" data-value="-">-</button></td>
+                </tr>
+                <tr>
+                    <td><button class="botao" data-value="1">1</button></td>
+                    <td><button class="botao" data-value="2">2</button></td>
+                    <td><button class="botao" data-value="3">3</button></td>
+                    <td><button class="botao" data-value="+">+</button></td>
+                </tr>
+                <tr>
+                    <td><button class="botao" data-action="toggle-sign">+/-</button></td>
+                    <td><button class="botao" data-value="0">0</button></td>
+                    <td><button class="botao" data-value=".">.</button></td>
+                    <td><button class="botao" data-action="calculate">=</button></td>
+                </tr>
             </table>
-    
+
     </div>
     </div>
     <script>
-        function insert(num)
-        {
-          var numero =  document.getElementById('resultado').innerHTML; 
-          document.getElementById('resultado').innerHTML =numero + num;   
-        }
-        function clean()
-        {
-            document.getElementById('resultado').innerHTML ="";
-        }
-        function back()
-        {
-            var resultado = document.getElementById('resultado').innerHTML;
-            document.getElementById('resultado').innerHTML = resultado.substring(0, resultado.length -1)
-        }
-        function calcular()
-        {
-            var resultado = document.getElementById('resultado').innerHTML;
-            if(resultado)
-            {
-                document.getElementById('resultado').innerHTML = eval(resultado);
-            }
-            else
-            {
-                document.getElementById('resultado').innerHTML = "Fim"
-            }
-        }
+        document.addEventListener('DOMContentLoaded', () => {
+            // Seleciona o visor e todos os botões da calculadora
+            const display = document.getElementById('resultado');
+            const buttons = document.querySelectorAll('.botao');
+
+            // Adiciona um event listener para cada botão
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const action = button.dataset.action;
+                    const value = button.dataset.value;
+
+                    // Se o botão tiver um valor (número ou operador), adiciona ao visor
+                    if (value) {
+                        display.textContent += value;
+                    }
+
+                    // Ação para limpar o visor
+                    if (action === 'clear') {
+                        display.textContent = '';
+                    }
+
+                    // Ação para apagar o último caractere
+                    if (action === 'backspace') {
+                        display.textContent = display.textContent.slice(0, -1);
+                    }
+
+                    // Ação para calcular a porcentagem
+                    if (action === 'percent') {
+                        display.textContent = parseFloat(display.textContent) / 100;
+                    }
+
+                    // Ação para inverter o sinal do número
+                    if (action === 'toggle-sign') {
+                        display.textContent = parseFloat(display.textContent) * -1;
+                    }
+
+                    // Ação para calcular o resultado final
+                    if (action === 'calculate') {
+                        try {
+                            // Usa o construtor Function para uma avaliação segura da expressão
+                            const result = new Function('return ' + display.textContent)();
+                            display.textContent = result;
+                        } catch (error) {
+                            // Exibe 'Erro' se a expressão for inválida
+                            display.textContent = 'Erro';
+                        }
+                    }
+                });
+            });
+        });
     </script>
 
 
 
-   
-   
-    
+
+
+
 </body>
 </html>
